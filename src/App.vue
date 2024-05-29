@@ -1,5 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppHeader from "./components/AppHeader.vue";
+import HomeView from "./views/HomeView.vue";
+</script>
 
-<template></template>
+<template>
+  <AppHeader />
+  <HomeView />
+</template>
 
 <style scoped></style>
