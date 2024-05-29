@@ -3,7 +3,7 @@
 <template>
   <header class="header">
     <div class="header__container">
-      <a class="icon__link">
+      <a class="icon__link" href="/">
         <img src="/wordle-seeklogo.svg" alt="logo" class="logo" />
       </a>
       <a class="icon__link help__icon">
@@ -33,6 +33,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .logo {
