@@ -1,48 +1,60 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from "vue";
+import BoardTile from "../components/BoardTile.vue";
+import KeyButton from "../components/KeyButton.vue";
+
+const keyWord = ref("gummy");
+const currentRowIndex = ref(0);
+const userWords = ref([]);
+
+function onKeyPressed(c: string) {}
+
+const keyboardListener = (e: KeyboardEvent) => {
+  // console.log(e.code.includes("Key"));
+};
+
+onMounted(() => {
+  window.addEventListener("keydown", keyboardListener);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", keyboardListener);
+});
+</script>
 
 <template>
   <main class="game__container">
     <div class="game__board">
       <div v-for="n in 6" :key="n" class="board__row">
-        <div v-for="n in 'goody'" :key="n" class="board__tile"></div>
+        <board-tile v-for="m in 5" :key="m" />
       </div>
     </div>
     <div class="keyboard__container">
       <div class="keyboard__row">
-        <button
-          v-for="n in 'qwertyuiop'"
-          :key="n"
-          type="button"
-          class="key__button"
-        >
-          {{ n }}
-        </button>
+        <key-button
+          v-for="c in 'qwertyuiop'"
+          :key="c"
+          :char="c"
+          @click="onKeyPressed(c)"
+        />
       </div>
       <div class="keyboard__row">
-        <button
-          v-for="n in 'asdfghjkl'"
-          :key="n"
-          type="button"
-          class="key__button"
-        >
-          {{ n }}
-        </button>
+        <key-button
+          v-for="c in 'asdfghjkl'"
+          :key="c"
+          :char="c"
+          @click="onKeyPressed(c)"
+        />
       </div>
       <div class="keyboard__row">
-        <button type="button" class="key__button key__button-wide">
-          enter
-        </button>
-        <button
-          v-for="n in 'zxcvbnm'"
-          :key="n"
-          type="button"
-          class="key__button"
-        >
-          {{ n }}
-        </button>
-        <button type="button" class="key__button key__button-wide">
-          <img src="/src/assets/icons/backspace-icon.svg" alt="backspace" />
-        </button>
+        <key-button char="enter" isWide @click="onKeyPressed('enter')" />
+        <key-button
+          v-for="c in 'zxcvbnm'"
+          :key="c"
+          :char="c"
+          @click="onKeyPressed(c)"
+        />
+        <key-button isWide isBackspace @click="onKeyPressed('backspace')" />
       </div>
     </div>
   </main>
@@ -72,18 +84,7 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 5px;
 }
-.board__tile {
-  border: 2px solid var(--main-gray);
 
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  text-transform: uppercase;
-  line-height: 1;
-  font-weight: bold;
-  vertical-align: middle;
-}
 .keyboard__container {
   height: 200px;
   padding: 0 8px;
@@ -99,22 +100,5 @@
   width: 100%;
   align-items: center;
   justify-content: center;
-}
-.key__button {
-  outline: none;
-  font-size: 1.25em;
-  font-weight: bold;
-  border: 0;
-  padding: 0;
-  height: 58px;
-  width: 43px;
-  border-radius: 4px;
-  cursor: pointer;
-  background-color: var(--light-gray);
-  text-transform: uppercase;
-}
-.key__button-wide {
-  flex: 0.9;
-  font-size: 12px;
 }
 </style>
