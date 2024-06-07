@@ -1,13 +1,74 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
+import { Tile } from "../types";
+import wordsData from "../words.json";
 import BoardTile from "../components/BoardTile.vue";
 import KeyButton from "../components/KeyButton.vue";
 
-const keyWord = ref("gummy");
-const currentRowIndex = ref(0);
-const userWords = ref([]);
+const keyWord = "melon";
 
-function onKeyPressed(c: string) {}
+const createTile = (): Tile => ({
+  letter: "",
+  color: "transparent"
+});
+const createRow = (): Tile[] => Array.from({ length: 5 }, createTile);
+const tiles = ref<Tile[][]>(Array.from({ length: 5 }, createRow));
+
+const userWords = ref<string[]>([]);
+const currentRowIndex = ref(1);
+const currentTileIndex = ref(1);
+const currentWord = ref("");
+
+function onKeyPressed(c: string) {
+  if (currentRowIndex.value >= 7) return;
+  if (currentTileIndex.value >= 6) return;
+  currentWord.value += c;
+  tiles.value[currentRowIndex.value - 1][currentTileIndex.value - 1].letter = c;
+
+  currentTileIndex.value += 1;
+}
+
+function checkWord() {
+  if (currentTileIndex.value != 6) return;
+
+  const isValidWord = wordsData.includes(currentWord.value);
+  if (!isValidWord) {
+    alert("Not in word list");
+    return;
+  }
+
+  const checkResult = [];
+  const keyWordDict: { [key: string]: number } = {};
+  for (let char of keyWord) {
+    keyWordDict[char] = (keyWordDict[char] || 0) + 1;
+  }
+
+  for (let i = 0; i < 5; i++) {
+    const isExist = keyWordDict[currentWord.value[i]] > 0;
+    if (isExist) {
+      keyWordDict[currentWord.value[i]] -= 1;
+    }
+
+    checkResult.push({
+      positionIsCorrect: currentWord.value[i] === keyWord[i],
+      isExist
+    });
+  }
+
+  console.log(checkResult);
+
+  userWords.value.push(currentWord.value);
+  currentTileIndex.value = 1;
+  currentRowIndex.value += 1;
+  currentWord.value = "";
+}
+function clearLetter() {
+  currentWord.value = currentWord.value.slice(0, -1);
+
+  currentTileIndex.value -= 1;
+  tiles.value[currentRowIndex.value - 1][currentTileIndex.value - 1].letter =
+    "";
+}
 
 const keyboardListener = (e: KeyboardEvent) => {
   // console.log(e.code.includes("Key"));
@@ -25,8 +86,13 @@ onUnmounted(() => {
 <template>
   <main class="game__container">
     <div class="game__board">
-      <div v-for="n in 6" :key="n" class="board__row">
-        <board-tile v-for="m in 5" :key="m" />
+      <div v-for="(row, i) in tiles" :key="i" class="board__row">
+        <board-tile
+          v-for="(tile, j) in row"
+          :key="j"
+          :letter="tile.letter"
+          :color="tile.color"
+        />
       </div>
     </div>
     <div class="keyboard__container">
@@ -47,14 +113,14 @@ onUnmounted(() => {
         />
       </div>
       <div class="keyboard__row">
-        <key-button char="enter" isWide @click="onKeyPressed('enter')" />
+        <key-button char="enter" isWide @click="checkWord" />
         <key-button
           v-for="c in 'zxcvbnm'"
           :key="c"
           :char="c"
           @click="onKeyPressed(c)"
         />
-        <key-button isWide isBackspace @click="onKeyPressed('backspace')" />
+        <key-button isWide isBackspace @click="clearLetter" />
       </div>
     </div>
   </main>
