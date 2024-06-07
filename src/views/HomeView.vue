@@ -7,6 +7,8 @@ import KeyButton from "../components/KeyButton.vue";
 
 const keyWord = "melon";
 
+let gameOver = false;
+
 const createTile = (): Tile => ({
   letter: "",
   color: "transparent"
@@ -20,6 +22,7 @@ const currentTileIndex = ref(1);
 const currentWord = ref("");
 
 function onKeyPressed(c: string) {
+  if (gameOver) return;
   if (currentRowIndex.value >= 7) return;
   if (currentTileIndex.value >= 6) return;
   currentWord.value += c;
@@ -29,6 +32,7 @@ function onKeyPressed(c: string) {
 }
 
 function checkWord() {
+  if (gameOver) return;
   if (currentTileIndex.value != 6) return;
 
   const isValidWord = wordsData.includes(currentWord.value);
@@ -54,6 +58,7 @@ function checkWord() {
         ? "yellow"
         : "gray";
   }
+  if (currentWord.value === keyWord) gameOver = true;
 
   userWords.value.push(currentWord.value);
   currentTileIndex.value = 1;
