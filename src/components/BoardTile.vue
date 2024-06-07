@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from "vue";
+
 const props = withDefaults(
   defineProps<{
     letter?: string;
@@ -9,10 +11,16 @@ const props = withDefaults(
     color: "transparent"
   }
 );
+const colorStyle = computed(() => ({
+  backgroundColor: `var(--${props.color})`,
+  border: `2px solid var(--${
+    props.color === "transparent" ? "main-gray" : props.color
+  })`
+}));
 </script>
 
 <template>
-  <div class="board__tile">{{ letter }}</div>
+  <div class="board__tile" :style="colorStyle">{{ letter }}</div>
 </template>
 
 <style scoped>
@@ -27,5 +35,6 @@ const props = withDefaults(
   line-height: 1;
   font-weight: bold;
   vertical-align: middle;
+  background-color: var(--g);
 }
 </style>
