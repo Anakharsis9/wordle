@@ -58,7 +58,10 @@ function checkWord() {
         ? "yellow"
         : "gray";
   }
-  if (currentWord.value === keyWord) gameOver = true;
+  if (currentWord.value === keyWord) {
+    gameOver = true;
+    return;
+  }
 
   userWords.value.push(currentWord.value);
   currentTileIndex.value = 1;
