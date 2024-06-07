@@ -37,7 +37,6 @@ function checkWord() {
     return;
   }
 
-  const checkResult = [];
   const keyWordDict: { [key: string]: number } = {};
   for (let char of keyWord) {
     keyWordDict[char] = (keyWordDict[char] || 0) + 1;
@@ -48,14 +47,13 @@ function checkWord() {
     if (isExist) {
       keyWordDict[currentWord.value[i]] -= 1;
     }
-
-    checkResult.push({
-      positionIsCorrect: currentWord.value[i] === keyWord[i],
-      isExist
-    });
+    tiles.value[currentRowIndex.value - 1][i].color =
+      currentWord.value[i] === keyWord[i]
+        ? "green"
+        : isExist
+        ? "yellow"
+        : "gray";
   }
-
-  console.log(checkResult);
 
   userWords.value.push(currentWord.value);
   currentTileIndex.value = 1;
