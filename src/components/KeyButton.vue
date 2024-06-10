@@ -1,21 +1,29 @@
 <script setup lang="ts">
+import { computed } from "vue";
+
 const props = withDefaults(
   defineProps<{
     char?: string;
     isWide?: boolean;
     isBackspace?: boolean;
+    color?: "transparent" | "green" | "yellow" | "gray";
   }>(),
   {
     isWide: false,
     isBackspace: false
   }
 );
+
+const colorStyle = computed(() => ({
+  backgroundColor: `var(--${props.color})`
+}));
 </script>
 
 <template>
   <button
     type="button"
     class="key__button"
+    :style="props.color && colorStyle"
     :class="{ 'key__button-wide': isWide }"
   >
     {{ char }}

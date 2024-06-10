@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
-import { Tile } from "../types";
+import { Tile, Key } from "../types";
 import wordsData from "../words.json";
 import BoardTile from "../components/BoardTile.vue";
 import KeyButton from "../components/KeyButton.vue";
@@ -15,6 +15,12 @@ const createTile = (): Tile => ({
 });
 const createRow = (): Tile[] => Array.from({ length: 5 }, createTile);
 const tiles = ref<Tile[][]>(Array.from({ length: 6 }, createRow));
+
+const keyboard = ref<Key[]>(
+  "qwertyuiopasdfghjklzxcvbnm".split("").map(char => ({
+    char
+  }))
+);
 
 const userWords = ref<string[]>([]);
 const currentRowIndex = ref(1);
@@ -51,12 +57,19 @@ function checkWord() {
     if (isExist) {
       keyWordDict[currentWord.value[i]] -= 1;
     }
-    tiles.value[currentRowIndex.value - 1][i].color =
+    const color =
       currentWord.value[i] === keyWord[i]
         ? "green"
         : isExist
         ? "yellow"
         : "gray";
+    tiles.value[currentRowIndex.value - 1][i].color = color;
+    const keyButton = keyboard.value.find(
+      key => key.char === currentWord.value[i]
+    )!;
+    if (!keyButton.color || color === "green") {
+      keyButton.color = color;
+    }
   }
   if (currentWord.value === keyWord) {
     gameOver = true;
@@ -104,27 +117,30 @@ onUnmounted(() => {
     <div class="keyboard__container">
       <div class="keyboard__row">
         <key-button
-          v-for="c in 'qwertyuiop'"
-          :key="c"
-          :char="c"
-          @click="onKeyPressed(c)"
+          v-for="key in keyboard.slice(0, 10)"
+          :key="key.char"
+          :char="key.char"
+          :color="key.color"
+          @click="onKeyPressed(key.char)"
         />
       </div>
       <div class="keyboard__row">
         <key-button
-          v-for="c in 'asdfghjkl'"
-          :key="c"
-          :char="c"
-          @click="onKeyPressed(c)"
+          v-for="key in keyboard.slice(10, 19)"
+          :key="key.char"
+          :char="key.char"
+          :color="key.color"
+          @click="onKeyPressed(key.char)"
         />
       </div>
       <div class="keyboard__row">
         <key-button char="enter" isWide @click="checkWord" />
         <key-button
-          v-for="c in 'zxcvbnm'"
-          :key="c"
-          :char="c"
-          @click="onKeyPressed(c)"
+          v-for="key in keyboard.slice(19, 26)"
+          :key="key.char"
+          :char="key.char"
+          :color="key.color"
+          @click="onKeyPressed(key.char)"
         />
         <key-button isWide isBackspace @click="clearLetter" />
       </div>
