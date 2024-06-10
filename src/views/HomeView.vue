@@ -14,7 +14,7 @@ const createTile = (): Tile => ({
   color: "transparent"
 });
 const createRow = (): Tile[] => Array.from({ length: 5 }, createTile);
-const tiles = ref<Tile[][]>(Array.from({ length: 5 }, createRow));
+const tiles = ref<Tile[][]>(Array.from({ length: 6 }, createRow));
 
 const userWords = ref<string[]>([]);
 const currentRowIndex = ref(1);
