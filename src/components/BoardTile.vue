@@ -6,6 +6,7 @@ const props = withDefaults(
     letter?: string;
     color?: "transparent" | "green" | "yellow" | "gray";
     delay?: number;
+    playWinAnimation?: boolean;
   }>(),
   {
     letter: "",
@@ -36,6 +37,20 @@ watch(
     }, props.delay + 500);
   }
 );
+
+const playJump = ref(false);
+watch(
+  () => props.playWinAnimation,
+  () => {
+    setTimeout(() => {
+      playJump.value = true;
+    }, props.delay + 1000);
+
+    setTimeout(() => {
+      playJump.value = false;
+    }, props.delay + 1300);
+  }
+);
 </script>
 
 <template>
@@ -44,7 +59,8 @@ watch(
     :style="[changeColor ? colorStyle : '']"
     :class="{
       'letter-entered': letter,
-      rotate: playRotate
+      rotate: playRotate,
+      jump: playJump
     }"
   >
     {{ letter }}
@@ -75,17 +91,10 @@ watch(
   transform: rotateX(90deg);
 }
 
-@keyframes rotate {
-  0% {
-    transform: rotateX(0deg);
-  }
-  50% {
-    transform: rotateX(90deg);
-  }
-  100% {
-    transform: rotateX(0deg);
-  }
+.jump {
+  transform: translateY(-25%);
 }
+
 @keyframes scale {
   0% {
     transform: scale(1);
