@@ -48,6 +48,7 @@ const colorStyle = computed(() => ({
   cursor: pointer;
   background-color: var(--light-gray);
   text-transform: uppercase;
+  transition: background-color 0.1s linear;
 }
 .key__button-wide {
   flex: 0.9;

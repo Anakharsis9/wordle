@@ -35,6 +35,5 @@ const colorStyle = computed(() => ({
   line-height: 1;
   font-weight: bold;
   vertical-align: middle;
-  background-color: var(--g);
 }
 </style>
