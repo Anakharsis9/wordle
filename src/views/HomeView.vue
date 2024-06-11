@@ -4,6 +4,7 @@ import { Tile, Key } from "../types";
 import wordsData from "../words.json";
 import BoardTile from "../components/BoardTile.vue";
 import KeyButton from "../components/KeyButton.vue";
+import ModalComponent from "../components/ModalComponent.vue";
 
 const keyWord = "melon";
 const todayDate = new Date().toDateString();
@@ -115,7 +116,6 @@ function checkTodayAttempts() {
   if (stringifiedAttempts) {
     const attempts = JSON.parse(stringifiedAttempts);
     userWords.value = attempts;
-    console.log(attempts);
 
     for (const word of attempts) {
       currentWord.value = word;
@@ -186,6 +186,7 @@ onUnmounted(() => {
       </div>
     </div>
   </main>
+  <modal-component :isOpen="true"> </modal-component>
 </template>
 
 <style scoped>
