@@ -6,6 +6,7 @@ import BoardTile from "../components/BoardTile.vue";
 import KeyButton from "../components/KeyButton.vue";
 
 const keyWord = "melon";
+const todayDate = new Date().toDateString();
 
 let gameOver = false;
 
@@ -37,9 +38,9 @@ function onKeyPressed(c: string) {
   currentTileIndex.value += 1;
 }
 
-function checkWord() {
+function checkWord(isLocalStorageCheck: boolean) {
   if (gameOver) return;
-  if (currentTileIndex.value != 5) return;
+  if (currentTileIndex.value !== 5) return;
 
   const isValidWord = wordsData.includes(currentWord.value);
   if (!isValidWord) {
@@ -68,12 +69,16 @@ function checkWord() {
       keyButton.color = color;
     }
   }
+  if (!isLocalStorageCheck) {
+    userWords.value.push(currentWord.value);
+    localStorage.setItem(todayDate, JSON.stringify(userWords.value));
+  }
+
   if (currentWord.value === keyWord) {
     gameOver = true;
     return;
   }
 
-  userWords.value.push(currentWord.value);
   currentTileIndex.value = 0;
   currentRowIndex.value += 1;
   currentWord.value = "";
@@ -101,12 +106,33 @@ const keyboardListener = (e: KeyboardEvent) => {
   } else if (e.code === "Backspace") {
     clearLetter();
   } else if (e.code === "Enter") {
-    checkWord();
+    checkWord(false);
   }
 };
 
+function checkTodayAttempts() {
+  const stringifiedAttempts = localStorage.getItem(todayDate);
+  if (stringifiedAttempts) {
+    const attempts = JSON.parse(stringifiedAttempts);
+    userWords.value = attempts;
+    console.log(attempts);
+
+    for (const word of attempts) {
+      currentWord.value = word;
+      for (let i = 0; i < 5; i++) {
+        tiles.value[currentRowIndex.value][i].letter = word[i];
+      }
+      currentTileIndex.value = 5;
+      checkWord(true);
+    }
+  } else {
+    localStorage.clear();
+  }
+}
+
 onMounted(() => {
   window.addEventListener("keydown", keyboardListener);
+  checkTodayAttempts();
 });
 
 onUnmounted(() => {
@@ -147,7 +173,7 @@ onUnmounted(() => {
         />
       </div>
       <div class="keyboard__row">
-        <key-button char="enter" isWide @click="checkWord" />
+        <key-button char="enter" isWide @click="checkWord(false)" />
         <key-button
           v-for="key in keyboard.slice(19, 26)"
           :key="key.char"
