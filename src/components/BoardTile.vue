@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 
 const props = withDefaults(
   defineProps<{
     letter?: string;
     color?: "transparent" | "green" | "yellow" | "gray";
+    delay?: number;
   }>(),
   {
     letter: "",
-    color: "transparent"
+    color: "transparent",
+    delay: 0
   }
 );
 const colorStyle = computed(() => ({
@@ -17,10 +19,36 @@ const colorStyle = computed(() => ({
     props.color === "transparent" ? "gray" : props.color
   })`
 }));
+
+const playRotate = ref(false);
+const changeColor = ref(false);
+
+watch(
+  () => props.color,
+  () => {
+    setTimeout(() => {
+      playRotate.value = true;
+    }, props.delay);
+
+    setTimeout(() => {
+      changeColor.value = true;
+      playRotate.value = false;
+    }, props.delay + 500);
+  }
+);
 </script>
 
 <template>
-  <div class="board__tile" :style="colorStyle">{{ letter }}</div>
+  <div
+    class="board__tile"
+    :style="[changeColor ? colorStyle : '']"
+    :class="{
+      'letter-entered': letter,
+      rotate: playRotate
+    }"
+  >
+    {{ letter }}
+  </div>
 </template>
 
 <style scoped>
@@ -35,5 +63,38 @@ const colorStyle = computed(() => ({
   line-height: 1;
   font-weight: bold;
   vertical-align: middle;
+  transition: transform 0.3s linear;
+  transform: rotateX(0deg);
+}
+
+.letter-entered {
+  animation: scale 0.1s linear 0ms;
+}
+
+.rotate {
+  transform: rotateX(90deg);
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+@keyframes scale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 </style>

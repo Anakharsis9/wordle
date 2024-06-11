@@ -37,12 +37,9 @@ function onKeyPressed(c: string) {
   currentTileIndex.value += 1;
 }
 
-const playAnimation = ref(false);
-
 function checkWord() {
   if (gameOver) return;
   if (currentTileIndex.value != 5) return;
-  playAnimation.value = true;
 
   const isValidWord = wordsData.includes(currentWord.value);
   if (!isValidWord) {
@@ -61,7 +58,9 @@ function checkWord() {
     }
     const color = isMatch ? "green" : isExist ? "yellow" : "gray";
 
-    tiles.value[currentRowIndex.value][i].color = color;
+    const tile = tiles.value[currentRowIndex.value][i];
+    tile.color = color;
+
     const keyButton = keyboard.value.find(
       key => key.char === currentWord.value[i]
     )!;
@@ -76,7 +75,7 @@ function checkWord() {
 
   userWords.value.push(currentWord.value);
   currentTileIndex.value = 0;
-  // currentRowIndex.value += 1;
+  currentRowIndex.value += 1;
   currentWord.value = "";
 }
 
@@ -124,8 +123,7 @@ onUnmounted(() => {
           :key="j"
           :letter="tile.letter"
           :color="tile.color"
-          :delay="(j + 1) * 100"
-          :playAnimation="playAnimation && i == currentRowIndex"
+          :delay="j * 100"
         />
       </div>
     </div>
