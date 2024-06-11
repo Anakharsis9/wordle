@@ -23,23 +23,26 @@ const keyboard = ref<Key[]>(
 );
 
 const userWords = ref<string[]>([]);
-const currentRowIndex = ref(1);
-const currentTileIndex = ref(1);
+const currentRowIndex = ref(0);
+const currentTileIndex = ref(0);
 const currentWord = ref("");
 
 function onKeyPressed(c: string) {
   if (gameOver) return;
-  if (currentRowIndex.value >= 7) return;
-  if (currentTileIndex.value >= 6) return;
+  if (currentRowIndex.value >= 6) return;
+  if (currentTileIndex.value >= 5) return;
   currentWord.value += c;
-  tiles.value[currentRowIndex.value - 1][currentTileIndex.value - 1].letter = c;
+  tiles.value[currentRowIndex.value][currentTileIndex.value].letter = c;
 
   currentTileIndex.value += 1;
 }
 
+const playAnimation = ref(false);
+
 function checkWord() {
   if (gameOver) return;
-  if (currentTileIndex.value != 6) return;
+  if (currentTileIndex.value != 5) return;
+  playAnimation.value = true;
 
   const isValidWord = wordsData.includes(currentWord.value);
   if (!isValidWord) {
@@ -58,7 +61,7 @@ function checkWord() {
     }
     const color = isMatch ? "green" : isExist ? "yellow" : "gray";
 
-    tiles.value[currentRowIndex.value - 1][i].color = color;
+    tiles.value[currentRowIndex.value][i].color = color;
     const keyButton = keyboard.value.find(
       key => key.char === currentWord.value[i]
     )!;
@@ -72,8 +75,8 @@ function checkWord() {
   }
 
   userWords.value.push(currentWord.value);
-  currentTileIndex.value = 1;
-  currentRowIndex.value += 1;
+  currentTileIndex.value = 0;
+  // currentRowIndex.value += 1;
   currentWord.value = "";
 }
 
@@ -90,8 +93,7 @@ function clearLetter() {
   currentWord.value = currentWord.value.slice(0, -1);
 
   currentTileIndex.value -= 1;
-  tiles.value[currentRowIndex.value - 1][currentTileIndex.value - 1].letter =
-    "";
+  tiles.value[currentRowIndex.value][currentTileIndex.value].letter = "";
 }
 
 const keyboardListener = (e: KeyboardEvent) => {
@@ -122,6 +124,8 @@ onUnmounted(() => {
           :key="j"
           :letter="tile.letter"
           :color="tile.color"
+          :delay="(j + 1) * 100"
+          :playAnimation="playAnimation && i == currentRowIndex"
         />
       </div>
     </div>
