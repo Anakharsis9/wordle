@@ -8,7 +8,7 @@ import KeyButton from "../components/KeyButton.vue";
 const keyWord = "melon";
 const todayDate = new Date().toDateString();
 
-let gameOver = false;
+let isGameWin = false;
 
 const createTile = (): Tile => ({
   letter: "",
@@ -29,7 +29,7 @@ const currentTileIndex = ref(0);
 const currentWord = ref("");
 
 function onKeyPressed(c: string) {
-  if (gameOver) return;
+  if (isGameWin) return;
   if (currentRowIndex.value >= 6) return;
   if (currentTileIndex.value >= 5) return;
   currentWord.value += c;
@@ -39,7 +39,7 @@ function onKeyPressed(c: string) {
 }
 
 function checkWord(isLocalStorageCheck: boolean) {
-  if (gameOver) return;
+  if (isGameWin) return;
   if (currentTileIndex.value !== 5) return;
 
   const isValidWord = wordsData.includes(currentWord.value);
@@ -75,7 +75,7 @@ function checkWord(isLocalStorageCheck: boolean) {
   }
 
   if (currentWord.value === keyWord) {
-    gameOver = true;
+    isGameWin = true;
     return;
   }
 
@@ -93,7 +93,7 @@ function makeKeyWordDictionary(): { [key: string]: number } {
 }
 
 function clearLetter() {
-  if (!currentWord.value || gameOver) return;
+  if (!currentWord.value || isGameWin) return;
   currentWord.value = currentWord.value.slice(0, -1);
 
   currentTileIndex.value -= 1;
@@ -150,6 +150,7 @@ onUnmounted(() => {
           :letter="tile.letter"
           :color="tile.color"
           :delay="j * 100"
+          :playWinAnimation="isGameWin && currentRowIndex === i"
         />
       </div>
     </div>
