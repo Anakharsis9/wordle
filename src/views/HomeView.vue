@@ -47,22 +47,17 @@ function checkWord() {
     return;
   }
 
-  const keyWordDict: { [key: string]: number } = {};
-  for (let char of keyWord) {
-    keyWordDict[char] = (keyWordDict[char] || 0) + 1;
-  }
+  const keyWordDict = makeKeyWordDictionary();
 
   for (let i = 0; i < 5; i++) {
     const isExist = keyWordDict[currentWord.value[i]] > 0;
+    const isMatch = currentWord.value[i] === keyWord[i];
+
     if (isExist) {
       keyWordDict[currentWord.value[i]] -= 1;
     }
-    const color =
-      currentWord.value[i] === keyWord[i]
-        ? "green"
-        : isExist
-        ? "yellow"
-        : "gray";
+    const color = isMatch ? "green" : isExist ? "yellow" : "gray";
+
     tiles.value[currentRowIndex.value - 1][i].color = color;
     const keyButton = keyboard.value.find(
       key => key.char === currentWord.value[i]
@@ -81,6 +76,15 @@ function checkWord() {
   currentRowIndex.value += 1;
   currentWord.value = "";
 }
+
+function makeKeyWordDictionary(): { [key: string]: number } {
+  const keyWordDict: { [key: string]: number } = {};
+  for (let char of keyWord) {
+    keyWordDict[char] = (keyWordDict[char] || 0) + 1;
+  }
+  return keyWordDict;
+}
+
 function clearLetter() {
   if (!currentWord.value || gameOver) return;
   currentWord.value = currentWord.value.slice(0, -1);
