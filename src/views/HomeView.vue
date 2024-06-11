@@ -82,6 +82,7 @@ function checkWord() {
   currentWord.value = "";
 }
 function clearLetter() {
+  if (!currentWord.value || gameOver) return;
   currentWord.value = currentWord.value.slice(0, -1);
 
   currentTileIndex.value -= 1;
@@ -90,7 +91,13 @@ function clearLetter() {
 }
 
 const keyboardListener = (e: KeyboardEvent) => {
-  // console.log(e.code.includes("Key"));
+  if (e.code.includes("Key")) {
+    onKeyPressed(e.key);
+  } else if (e.code === "Backspace") {
+    clearLetter();
+  } else if (e.code === "Enter") {
+    checkWord();
+  }
 };
 
 onMounted(() => {
