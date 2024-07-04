@@ -18,7 +18,7 @@ onClickOutside(target, () => emit("modal-close"));
   <Transition name="slide-up">
     <div v-if="isOpen" class="modal-mask">
       <div class="modal-wrapper">
-        <div class="modal-container">
+        <div class="modal-container" ref="target">
           <div class="modal-header">
             <div class="close-icon__wrapper">
               <img
