@@ -210,9 +210,12 @@ onUnmounted(() => {
       <h3 class="gameover-modal__header">
         {{ isGameWin ? "Congratulations!" : "Thanks for playing today!" }}
       </h3>
-      <span
-        >Today's keyword is <span class="keyword">{{ keyWord }}</span></span
-      >
+      <span v-if="isGameWin">
+        You guessed right on the {{ currentRowIndex + 1 }} try
+      </span>
+      <span v-else>
+        Today's keyword is <span class="keyword">{{ keyWord }}</span>
+      </span>
     </template>
   </modal-component>
 </template>
