@@ -15,25 +15,27 @@ onClickOutside(target, () => emit("modal-close"));
 </script>
 
 <template>
-  <div v-if="isOpen" class="modal-mask">
-    <div class="modal-wrapper">
-      <div class="modal-container">
-        <div class="modal-header">
-          <div class="close-icon__wrapper">
-            <img
-              src="/src/assets/icons/close-icon.svg"
-              alt="close"
-              class="close-icon"
-              @click.stop="emit('modal-close')"
-            />
+  <Transition name="slide-up">
+    <div v-if="isOpen" class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+          <div class="modal-header">
+            <div class="close-icon__wrapper">
+              <img
+                src="/src/assets/icons/close-icon.svg"
+                alt="close"
+                class="close-icon"
+                @click.stop="emit('modal-close')"
+              />
+            </div>
           </div>
-        </div>
-        <div class="modal-body">
-          <slot name="content"> default content </slot>
+          <div class="modal-body">
+            <slot name="content"> default content </slot>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <style scoped>
@@ -63,5 +65,18 @@ onClickOutside(target, () => emit("modal-close"));
   width: 30px;
   height: 30px;
   cursor: pointer;
+}
+.slide-up-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-up-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(20px);
+  opacity: 0;
 }
 </style>
