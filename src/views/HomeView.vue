@@ -10,6 +10,7 @@ const keyWord = "melon";
 const todayDate = new Date().toDateString();
 
 let isGameWin = false;
+const isGameOverModalOpen = ref(false);
 
 const createTile = (): Tile => ({
   letter: "",
@@ -41,6 +42,7 @@ function onKeyPressed(c: string) {
 
 function checkWord(isLocalStorageCheck: boolean) {
   if (isGameWin) return;
+
   if (currentTileIndex.value !== 5) return;
 
   const isValidWord = wordsData.includes(currentWord.value);
@@ -77,6 +79,12 @@ function checkWord(isLocalStorageCheck: boolean) {
 
   if (currentWord.value === keyWord) {
     isGameWin = true;
+    isGameOverModalOpen.value = true;
+    return;
+  }
+
+  if (currentRowIndex.value === 5) {
+    isGameOverModalOpen.value = true;
     return;
   }
 
@@ -186,7 +194,27 @@ onUnmounted(() => {
       </div>
     </div>
   </main>
-  <modal-component :isOpen="true"> </modal-component>
+  <modal-component
+    :isOpen="isGameOverModalOpen"
+    @modal-close="isGameOverModalOpen = !isGameOverModalOpen"
+  >
+    <template #content>
+      <div class="congrats-icon">
+        <img
+          v-if="isGameWin"
+          src="/src/assets/icons/congrats-icon.svg"
+          alt="congrats"
+        />
+        <img v-else src="/Wordle_Icon.svg" alt="loser" class="wordle-logo" />
+      </div>
+      <h3 class="gameover-modal__header">
+        {{ isGameWin ? "Congratulations!" : "Thanks for playing today!" }}
+      </h3>
+      <span
+        >Today's keyword is <span class="keyword">{{ keyWord }}</span></span
+      >
+    </template>
+  </modal-component>
 </template>
 
 <style scoped>
@@ -229,5 +257,22 @@ onUnmounted(() => {
   width: 100%;
   align-items: center;
   justify-content: center;
+}
+.congrats-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gameover-modal__header {
+  font-size: 1.5em;
+}
+.wordle-logo {
+  width: 56px;
+  height: 56px;
+}
+.keyword {
+  color: var(--green);
+  font-weight: 600;
+  text-transform: uppercase;
 }
 </style>

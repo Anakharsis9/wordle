@@ -19,8 +19,13 @@ onClickOutside(target, () => emit("modal-close"));
     <div class="modal-wrapper">
       <div class="modal-container">
         <div class="modal-header">
-          <div class="close-icon" @click.stop="emit('modal-close')">
-            <img src="/src/assets/icons/close-icon.svg" alt="close" />
+          <div class="close-icon__wrapper">
+            <img
+              src="/src/assets/icons/close-icon.svg"
+              alt="close"
+              class="close-icon"
+              @click.stop="emit('modal-close')"
+            />
           </div>
         </div>
         <div class="modal-body">
@@ -46,13 +51,17 @@ onClickOutside(target, () => emit("modal-close"));
   margin: 150px auto;
   padding: 20px 30px;
   background-color: var(--background);
-  border-radius: 2px;
+  border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
 }
-.close-icon {
+.close-icon__wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+}
+.close-icon {
+  width: 30px;
+  height: 30px;
   cursor: pointer;
 }
 </style>
